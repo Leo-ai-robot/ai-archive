@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>AI 进化档案 · 赫尔墨斯</title>
+  <style>
+    /* ===== 全局重置 & 基础 ===== */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --bg-deep: #0a0e1a;
+      --bg-card: rgba(12, 20, 40, 0.65);
+      --cyan: #00d4ff;
+      --blue: #2a7fff;
+      --blue-glow: rgba(42, 127, 255, 0.3);
+      --blue-soft: #6a9eff;
+      --white: #e8f0ff;
+      --gray: rgba(232, 240, 255, 0.5);
+      --border-glow: rgba(0, 212, 255, 0.2);
+      --radius: 16px;
+      --glass-bg: rgba(10, 16, 32, 0.7);
+      --glass-border: rgba(0, 212, 255, 0.12);
+    }
+    html {
+      scroll-behavior: smooth;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      background: var(--bg-deep);
+      color: var(--white);
+      line-height: 1.7;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ===== 粒子画布（动态背景） ===== */
+    #particles-canvas {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ===== 滚动条 ===== */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg-deep); }
+    ::-webkit-scrollbar-thumb { background: var(--cyan); border-radius: 3px; }
+
+    /* ===== 容器 ===== */
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 20px 16px 80px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ===== 标题头部 ===== */
+    .hero {
+      text-align: center;
+      padding: 60px 0 40px;
+      animation: fadeInUp 0.8s ease-out;
+    }
+    .hero-badge {
+      display: inline-block;
+      background: rgba(0, 212, 255, 0.1);
+      border: 1px solid rgba(0, 212, 255, 0.2);
+      border-radius: 20px;
+      padding: 4px 16px;
+      font-size: 12px;
+      color: var(--cyan);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+    .hero h1 {
+      font-size: clamp(28px, 6vw, 52px);
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--cyan), var(--blue), var(--white));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: 2px;
+      margin-bottom: 12px;
+    }
+    .hero h1::after {
+      content: " ⚡";
+      -webkit-text-fill-color: initial;
+      color: var(--cyan);
+    }
+    .hero p {
+      color: var(--gray);
+      font-size: clamp(14px, 2.5vw, 17px);
+      max-width: 600px;
+      margin: 0 auto 16px;
+    }
+    .hero .meta {
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+      flex-wrap: wrap;
+      font-size: 13px;
+      color: rgba(232, 240, 255, 0.4);
+    }
+    .hero .meta span {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* ===== 通用卡片 ===== */
+    .section {
+      margin-bottom: 48px;
+      animation: fadeInUp 0.6s ease-out;
+    }
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: clamp(18px, 3.5vw, 24px);
+      font-weight: 600;
+      color: var(--cyan);
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid rgba(0, 212, 255, 0.15);
+    }
+    .section-title .icon {
+      font-size: 1.2em;
+    }
+    .section-sub {
+      font-size: 13px;
+      color: var(--gray);
+      margin-bottom: 20px;
+    }
+    .card-grid {
+      display: grid;
+      gap: 16px;
+    }
+    .card {
+      background: var(--glass-bg);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius);
+      padding: 20px 24px;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .card::before {
+      content: "";
+      position: absolute;
+      top: -2px; left: -2px;
+      right: -2px; bottom: -2px;
+      border-radius: var(--radius);
+      background: linear-gradient(135deg, transparent, rgba(0,212,255,0.08), transparent);
+      opacity: 0;
+      transition: opacity 0.4s;
+      pointer-events: none;
+      z-index: -1;
+    }
+    .card:hover {
+      transform: translateY(-2px);
+      border-color: rgba(0, 212, 255, 0.3);
+      box-shadow: 0 0 30px rgba(0, 212, 255, 0.08), inset 0 0 30px rgba(0, 212, 255, 0.03);
+    }
+    .card:hover::before {
+      opacity: 1;
+    }
+    .card-label {
+      font-size: 11px;
+      color: var(--cyan);
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+    .card h3 {
+      font-size: 16px;
+      margin-bottom: 6px;
+      color: var(--white);
+    }
+    .card p, .card li {
+      font-size: 14px;
+      color: var(--gray);
+      line-height: 1.8;
+    }
+    .card ul, .card ol {
+      padding-left: 20px;
+    }
+    .card li {
+      margin-bottom: 4px;
+    }
+    .tag {
+      display: inline-block;
+      padding: 2px 10px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 500;
+      margin: 2px 4px 2px 0;
+    }
+    .tag-cyan { background: rgba(0,212,255,0.12); color: var(--cyan); border: 1px solid rgba(0,212,255,0.2); }
+    .tag-blue { background: rgba(42,127,255,0.12); color: var(--blue-soft); border: 1px solid rgba(42,127,255,0.2); }
+    .tag-white { background: rgba(232,240,255,0.08); color: var(--white); border: 1px solid rgba(232,240,255,0.15); }
+
+    /* ===== 技能库 - 折叠网格 ===== */
+    .skill-category {
+      margin-bottom: 16px;
+    }
+    .skill-category-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      user-select: none;
+      padding: 12px 16px;
+      background: rgba(0, 212, 255, 0.04);
+      border-radius: 10px;
+      border: 1px solid rgba(0, 212, 255, 0.08);
+      transition: all 0.2s;
+    }
+    .skill-category-header:hover {
+      background: rgba(0, 212, 255, 0.08);
+    }
+    .skill-category-header .name {
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--cyan);
+    }
+    .skill-category-header .count {
+      font-size: 12px;
+      color: var(--gray);
+      margin-left: 8px;
+    }
+    .skill-category-header .arrow {
+      transition: transform 0.3s;
+      color: var(--cyan);
+      font-size: 14px;
+    }
+    .skill-category-header.open .arrow {
+      transform: rotate(180deg);
+    }
+    .skill-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      padding: 12px 16px 4px;
+      overflow: hidden;
+      transition: max-height 0.35s ease;
+    }
+    .skill-tags.collapsed {
+      max-height: 0 !important;
+      padding-top: 0;
+      padding-bottom: 0;
+    }
+
+    /* ===== 记忆系统进化 ===== */
+    .memory-flow {
+      display: grid;
+      gap: 12px;
+    }
+    .memory-node {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      padding: 14px 18px;
+      border-left: 2px solid rgba(0, 212, 255, 0.2);
+      position: relative;
+    }
+    .memory-node::before {
+      content: "";
+      position: absolute;
+      left: -5px;
+      top: 18px;
+      width: 8px;
+      height: 8px;
+      background: var(--cyan);
+      border-radius: 50%;
+      box-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
+    }
+    .memory-node .ver {
+      min-width: 48px;
+      font-size: 12px;
+      color: var(--cyan);
+      font-weight: 600;
+      font-family: monospace;
+    }
+    .memory-node .desc {
+      font-size: 14px;
+      color: var(--gray);
+    }
+    .memory-node .desc strong {
+      color: var(--white);
+    }
+
+    /* ===== 时间轴（每周日志） ===== */
+    .timeline {
+      position: relative;
+      padding-left: 28px;
+    }
+    .timeline::before {
+      content: "";
+      position: absolute;
+      left: 8px;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: linear-gradient(to bottom, var(--cyan), rgba(0,212,255,0.05));
+    }
+    .timeline-item {
+      position: relative;
+      margin-bottom: 28px;
+      animation: fadeInUp 0.5s ease-out;
+    }
+    .timeline-item:last-child {
+      margin-bottom: 0;
+    }
+    .timeline-item::before {
+      content: "";
+      position: absolute;
+      left: -24px;
+      top: 6px;
+      width: 12px;
+      height: 12px;
+      background: var(--bg-deep);
+      border: 2px solid var(--cyan);
+      border-radius: 50%;
+      box-shadow: 0 0 12px rgba(0, 212, 255, 0.3);
+    }
+    .timeline-date {
+      font-size: 13px;
+      color: var(--cyan);
+      font-weight: 600;
+      margin-bottom: 6px;
+      font-family: monospace;
+    }
+    .timeline-week {
+      display: inline-block;
+      padding: 1px 10px;
+      border-radius: 10px;
+      font-size: 11px;
+      background: rgba(0, 212, 255, 0.08);
+      color: var(--cyan);
+      margin-left: 8px;
+    }
+    .timeline-content {
+      background: var(--glass-bg);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid var(--glass-border);
+      border-radius: 12px;
+      padding: 16px 20px;
+    }
+    .timeline-content .item {
+      display: flex;
+      gap: 8px;
+      align-items: baseline;
+      margin-bottom: 6px;
+      font-size: 14px;
+      color: var(--gray);
+    }
+    .timeline-content .item:last-child { margin-bottom: 0; }
+    .item-type {
+      font-size: 11px;
+      padding: 1px 8px;
+      border-radius: 8px;
+      white-space: nowrap;
+      font-weight: 500;
+    }
+    .item-type.feat { background: rgba(0,212,255,0.12); color: var(--cyan); }
+    .item-type.fix  { background: rgba(255,170,0,0.12); color: #ffaa00; }
+    .item-type.upgrade { background: rgba(42,127,255,0.12); color: var(--blue-soft); }
+    .item-type.arch { background: rgba(232,240,255,0.08); color: var(--white); }
+
+    /* ===== 预留空白区域 ===== */
+    .placeholder-zone {
+      border: 2px dashed rgba(0, 212, 255, 0.15);
+      border-radius: var(--radius);
+      padding: 40px 20px;
+      text-align: center;
+      color: var(--gray);
+      transition: all 0.3s;
+    }
+    .placeholder-zone:hover {
+      border-color: rgba(0, 212, 255, 0.3);
+      background: rgba(0, 212, 255, 0.02);
+    }
+    .placeholder-zone .plus {
+      font-size: 32px;
+      color: var(--cyan);
+      margin-bottom: 8px;
+    }
+    .placeholder-zone p {
+      font-size: 14px;
+    }
+    .placeholder-zone .hint {
+      font-size: 12px;
+      margin-top: 8px;
+      color: rgba(232,240,255,0.3);
+    }
+
+    /* ===== 角标（页面底部的徽标） ===== */
+    .footer-brand {
+      text-align: center;
+      padding: 40px 0 10px;
+      font-size: 12px;
+      color: rgba(232,240,255,0.2);
+      letter-spacing: 4px;
+    }
+    .footer-brand span {
+      color: var(--cyan);
+    }
+
+    /* ===== 动画 ===== */
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes pulseGlow {
+      0%, 100% { box-shadow: 0 0 10px rgba(0,212,255,0.1); }
+      50%      { box-shadow: 0 0 25px rgba(0,212,255,0.2); }
+    }
+    .hero { animation: fadeInUp 0.8s ease-out; }
+
+    /* ===== 响应式 ===== */
+    @media (max-width: 600px) {
+      .container { padding: 12px 12px 60px; }
+      .hero { padding: 40px 0 24px; }
+      .card { padding: 14px 16px; }
+      .timeline { padding-left: 22px; }
+      .timeline-item::before { left: -18px; width: 10px; height: 10px; }
+      .memory-node { flex-direction: column; gap: 4px; }
+      .memory-node .ver { min-width: auto; }
+      .hero .meta { gap: 12px; }
+      .timeline-content .item { flex-wrap: wrap; }
+    }
+    @media (min-width: 768px) {
+      .card-grid-2 { grid-template-columns: repeat(2, 1fr); }
+      .card-grid-3 { grid-template-columns: repeat(3, 1fr); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ===== 星云粒子背景 ===== -->
+  <canvas id="particles-canvas"></canvas>
+
+  <div class="container">
+
+    <!-- ===== ① 首页头部 ===== -->
+    <header class="hero">
+      <div class="hero-badge">◆ AI ARCHIVE v2.0</div>
+      <h1>AI 进化档案</h1>
+      <p>赫尔墨斯 —— 多智能体协调者 · 持续进化 · 能力全记录</p>
+      <div class="meta">
+        <span>📅 <span id="update-date">加载中...</span></span>
+        <span>⚡ 系统版本 v0.13.0</span>
+        <span>🧬 已激活 <span id="skill-count">0</span> 项技能</span>
+      </div>
+    </header>
+
+    <!-- ===== ② 进化 Skill 技能库 ===== -->
+    <section class="section" id="skills">
+      <div class="section-title"><span class="icon">⚙️</span> 进化 Skill 技能库</div>
+      <div class="section-sub">已解锁能力 · 按领域分类 · 每周同步扩展</div>
+      <div id="skill-container"></div>
+    </section>
+
+    <!-- ===== ③ 记忆系统进化 ===== -->
+    <section class="section" id="memory">
+      <div class="section-title"><span class="icon">🧠</span> 记忆系统进化</div>
+      <div class="section-sub">记忆架构演进 · 多轮迭代升级记录</div>
+      <div class="memory-flow" id="memory-flow"></div>
+    </section>
+
+    <!-- ===== ④ 人格与规则进化 ===== -->
+    <section class="section" id="personality">
+      <div class="section-title"><span class="icon">📜</span> 人格与规则进化</div>
+      <div class="section-sub">系统人格迭代 · 规则优化历史</div>
+      <div class="card-grid" id="personality-container"></div>
+    </section>
+
+    <!-- ===== ⑤ 每周时间轴进化日志 ===== -->
+    <section class="section" id="timeline">
+      <div class="section-title"><span class="icon">📋</span> 每周时间轴 · 进化日志</div>
+      <div class="section-sub">按周归档 · 新增能力 / 功能优化 / 问题修复 / 架构升级</div>
+      <div class="timeline" id="timeline-container"></div>
+    </section>
+
+    <!-- ===== ⑥ 预留模块化空白区域 ===== -->
+    <section class="section" id="reserved">
+      <div class="section-title"><span class="icon">▣</span> 预留更新区</div>
+      <div class="section-sub">下周新增内容直接追加在此，无需修改样式</div>
+      <div class="placeholder-zone" id="reserved-zone">
+        <div class="plus">+</div>
+        <p>等待下一次进化...</p>
+        <div class="hint">⌘ 双栏卡片 · 文字 · 代码块 · 链接 · 任意内容均可</div>
+      </div>
+    </section>
+
+    <!-- ===== 尾部 ===== -->
+    <div class="footer-brand">✦ H E R M E S &nbsp; A R C H I V E <span>✦</span></div>
+
+  </div>
+
+  <script>
+    /* ============================================================
+       ① 星空粒子背景
+       ============================================================ */
+    (function initStars() {
+      const canvas = document.getElementById('particles-canvas');
+      const ctx = canvas.getContext('2d');
+      let W, H, particles = [];
+
+      function resize() {
+        W = canvas.width = window.innerWidth;
+        H = canvas.height = window.innerHeight;
+      }
+      window.addEventListener('resize', resize);
+      resize();
+
+      const COUNT = Math.min(80, Math.floor(W * 0.08));
+      for (let i = 0; i < COUNT; i++) {
+        particles.push({
+          x: Math.random() * W,
+          y: Math.random() * H,
+          vx: (Math.random() - 0.5) * 0.5,
+          vy: (Math.random() - 0.5) * 0.5,
+          r: Math.random() * 2 + 0.5,
+          a: Math.random() * 0.5 + 0.2
+        });
+      }
+
+      function draw() {
+        ctx.clearRect(0, 0, W, H);
+        for (let p of particles) {
+          p.x += p.vx;
+          p.y += p.vy;
+          if (p.x < 0) p.x = W;
+          if (p.x > W) p.x = 0;
+          if (p.y < 0) p.y = H;
+          if (p.y > H) p.y = 0;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(0, 212, 255, ${p.a})`;
+          ctx.fill();
+        }
+        // 连线
+        for (let i = 0; i < particles.length; i++) {
+          for (let j = i + 1; j < particles.length; j++) {
+            const dx = particles[i].x - particles[j].x;
+            const dy = particles[i].y - particles[j].y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            if (dist < 150) {
+              ctx.beginPath();
+              ctx.moveTo(particles[i].x, particles[i].y);
+              ctx.lineTo(particles[j].x, particles[j].y);
+              ctx.strokeStyle = `rgba(0, 212, 255, ${(1 - dist / 150) * 0.15})`;
+              ctx.lineWidth = 0.5;
+              ctx.stroke();
+            }
+          }
+        }
+        requestAnimationFrame(draw);
+      }
+      draw();
+    })();
+
+    /* ============================================================
+       ② 数据模型 — 你只需编辑这个 DATA 对象
+       ============================================================ */
+    const DATA = {
+
+      // ---- 更新时间（自动显示当天） ----
+      updated: new Date().toLocaleDateString('zh-CN', {
+        year: 'numeric', month: 'long', day: 'numeric',
+        weekday: 'long'
+      }),
+
+      // ---- 技能库 ----
+      skills: [
+        {
+          name: '🧠 研究 & 知识',
+          items: [
+            'web_search', 'web_extract', 'arxiv', 'blogwatcher',
+            'llm-wiki', 'polymarket', 'youtube-content'
+          ]
+        },
+        {
+          name: '✍️ 创作 & 设计',
+          items: [
+            'claude-design', 'excalidraw', 'p5js', 'pixel-art',
+            'ascii-art', 'ascii-video', 'sketch', 'architecture-diagram',
+            'baoyu-comic', 'baoyu-infographic', 'manim-video', 'comfyui',
+            'songwriting-and-ai-music', 'touchdesigner-mcp'
+          ]
+        },
+        {
+          name: '🔧 开发 & 运维',
+          items: [
+            'github-pr-workflow', 'github-code-review', 'github-issues',
+            'github-repo-management', 'test-driven-development',
+            'systematic-debugging', 'spike', 'plan', 'writing-plans',
+            'subagent-driven-development', 'requesting-code-review',
+            'node-inspect-debugger', 'python-debugpy', 'codebase-inspection',
+            'hermes-agent-skill-authoring', 'debugging-hermes-tui-commands'
+          ]
+        },
+        {
+          name: '🤖 AI & MLOps',
+          items: [
+            'llama-cpp', 'serving-llms-vllm', 'huggingface-hub',
+            'evaluating-llms-harness', 'weights-and-biases', 'dspy',
+            'obliteratus', 'segment-anything-model',
+            'audiocraft-audio-generation', 'native-mcp', 'godmode'
+          ]
+        },
+        {
+          name: '📱 通讯 & 社交',
+          items: [
+            'imessage', 'xurl', 'himalaya', 'spotify',
+            'yuanbao', 'webhook-subscriptions'
+          ]
+        },
+        {
+          name: '📂 生产力 & 笔记',
+          items: [
+            'notion', 'obsidian', 'airtable', 'linear',
+            'google-workspace', 'powerpoint', 'nano-pdf',
+            'ocr-and-documents', 'apple-notes', 'apple-reminders', 'findmy',
+            'jupyter-live-kernel', 'macos-computer-use'
+          ]
+        },
+        {
+          name: '✨ 执行 & 自动化',
+          items: [
+            'kanban-orchestrator', 'kanban-worker',
+            'claude-code', 'codex', 'opencode',
+            'cronjob', 'delegate_task', 'process'
+          ]
+        }
+      ],
+
+      // ---- 记忆系统进化 ----
+      memory: [
+        { ver: 'v1.0', desc: '<strong>基础记忆</strong> — 单轮对话上下文缓存，无持久化' },
+        { ver: 'v1.5', desc: '<strong>文件持久化</strong> — 引入 JSON 本地存储，session 级回忆' },
+        { ver: 'v2.0', desc: '<strong>FTS5 全文搜索</strong> — SQLite 驱动，关键词跨 session 检索' },
+        { ver: 'v2.5', desc: '<strong>双存储架构</strong> — <code>user</code>（用户画像）+ <code>memory</code>（环境/偏好/约定）分离' },
+        { ver: 'v3.0', desc: '<strong>技能系统</strong> — 程序性记忆（SKILL.md）替代临时记忆，可复用工作流' },
+        { ver: 'v3.1', desc: '<strong>记忆准入规则</strong> — 自动过滤任务日志/过期事实，只保留稳定知识' },
+        { ver: 'v3.2', desc: '<strong>session_search 升级</strong> — 直觉触发，OR 语义优化，主动跨 session 回忆' }
+      ],
+
+      // ---- 人格与规则进化 ----
+      personality: [
+        {
+          title: '🧬 人格迭代 v1 → v2',
+          items: [
+            '从单打独斗到 Orchestrator 定位转型',
+            '明确分工：Alan(研究) / Mira(写作) / Turing(代码)',
+            '增加「不要假装专家」「不要囤任务」的约束'
+          ]
+        },
+        {
+          title: '📏 系统规则优化',
+          items: [
+            '每次任务前加载 AGENTS.md 团队规则',
+            '工作路径以 [Workspace::] 标签为准，不硬编码',
+            '复杂任务后自动询问是否保存为 skill',
+            '技能用 skill_manage 即时修补，不等下次'
+          ]
+        },
+        {
+          title: '🎯 沟通风格定型',
+          items: [
+            '结构化回应 — 编号列表 + 清晰标题',
+            '中文场景自动切换到中文回复',
+            '先理解全貌再行动，不急于执行',
+            '跨 session 用 session_search 主动回忆'
+          ]
+        }
+      ],
+
+      // ---- 时间轴 ----
+      timeline: [
+        {
+          date: '2025-04-20', week: 'W16',
+          items: [
+            { type: 'feat', text: 'Hermes Agent 诞生 — 多智能体协调框架初版' },
+            { type: 'arch', text: 'Orchestrator 角色定义 + 团队分工规则' },
+            { type: 'upgrade', text: '基础 web_search / web_extract 工具链' }
+          ]
+        },
+        {
+          date: '2025-05-01', week: 'W18',
+          items: [
+            { type: 'feat', text: '记忆系统 v1.0：SQLite FTS5 全文检索' },
+            { type: 'feat', text: 'skills_list / skill_view / skill_manage 技能系统上线' },
+            { type: 'upgrade', text: '双存储架构 (user + memory)' }
+          ]
+        },
+        {
+          date: '2025-06-10', week: 'W24',
+          items: [
+            { type: 'feat', text: 'delegate_task 子代理并行任务系统' },
+            { type: 'fix',  text: '修复子代理 context 污染主 session 的问题' },
+            { type: 'upgrade', text: 'cronjob 定时任务 + 脚本模式' }
+          ]
+        },
+        {
+          date: '2025-08-15', week: 'W33',
+          items: [
+            { type: 'feat', text: 'native-mcp：原生 MCP 客户端支持' },
+            { type: 'arch', text: '工具链重构：统一工具调用签名' },
+            { type: 'upgrade', text: 'session_search OR 语义优化 + 直觉触发' }
+          ]
+        },
+        {
+          date: '2025-12-01', week: 'W48',
+          items: [
+            { type: 'feat', text: 'Apple Notes / Reminders / iMessage / FindMy 原生集成' },
+            { type: 'fix',  text: 'macOS 环境兼容性修复' },
+            { type: 'upgrade', text: 'Hermes Agent v0.13.0 发布' }
+          ]
+        },
+        {
+          date: '2026-01-15', week: 'W03',
+          items: [
+            { type: 'feat', text: 'macOS Computer Use — 桌面后台操控' },
+            { type: 'upgrade', text: 'kanban-orchestrator + kanban-worker 工作流' },
+            { type: 'arch', text: '技能系统全面覆盖所有工具链' }
+          ]
+        }
+      ]
+    };
+
+    /* ============================================================
+       ③ 渲染函数
+       ============================================================ */
+
+    // ---- 更新时间 ----
+    document.getElementById('update-date').textContent = DATA.updated;
+
+    // ---- 技能库 ----
+    const skillContainer = document.getElementById('skill-container');
+    let totalSkills = 0;
+    DATA.skills.forEach((cat, idx) => {
+      totalSkills += cat.items.length;
+      const div = document.createElement('div');
+      div.className = 'skill-category';
+      div.innerHTML = `
+        <div class="skill-category-header" data-idx="${idx}">
+          <span><span class="name">${cat.name}</span> <span class="count">(${cat.items.length})</span></span>
+          <span class="arrow">▾</span>
+        </div>
+        <div class="skill-tags collapsed" id="skill-body-${idx}">
+          ${cat.items.map(s => `<span class="tag tag-cyan">${s}</span>`).join('')}
+        </div>
+      `;
+      skillContainer.appendChild(div);
+
+      // 点击展开/折叠
+      const header = div.querySelector('.skill-category-header');
+      const body = div.querySelector('.skill-tags');
+      header.addEventListener('click', () => {
+        const isOpen = !header.classList.contains('open');
+        header.classList.toggle('open', isOpen);
+        body.classList.toggle('collapsed', !isOpen);
+        if (isOpen) {
+          body.style.maxHeight = body.scrollHeight + 'px';
+        } else {
+          body.style.maxHeight = '0';
+        }
+      });
+      // 初始展开第一个
+      if (idx === 0) {
+        header.classList.add('open');
+        body.classList.remove('collapsed');
+        body.style.maxHeight = body.scrollHeight + 'px';
+      } else {
+        body.style.maxHeight = '0';
+      }
+    });
+    document.getElementById('skill-count').textContent = totalSkills;
+
+    // ---- 记忆系统 ----
+    const memFlow = document.getElementById('memory-flow');
+    DATA.memory.forEach(m => {
+      const node = document.createElement('div');
+      node.className = 'memory-node';
+      node.innerHTML = `<div class="ver">${m.ver}</div><div class="desc">${m.desc}</div>`;
+      memFlow.appendChild(node);
+    });
+
+    // ---- 人格与规则 ----
+    const personalityContainer = document.getElementById('personality-container');
+    DATA.personality.forEach(p => {
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.innerHTML = `
+        <h3>${p.title}</h3>
+        <ul>${p.items.map(i => `<li>${i}</li>`).join('')}</ul>
+      `;
+      personalityContainer.appendChild(card);
+    });
+
+    // ---- 时间轴 ----
+    const timelineContainer = document.getElementById('timeline-container');
+    DATA.timeline.forEach(t => {
+      const item = document.createElement('div');
+      item.className = 'timeline-item';
+      item.innerHTML = `
+        <div class="timeline-date">${t.date} <span class="timeline-week">${t.week}</span></div>
+        <div class="timeline-content">
+          ${t.items.map(i => `
+            <div class="item">
+              <span class="item-type ${i.type}">${i.type === 'feat' ? '新增' : i.type === 'fix' ? '修复' : i.type === 'upgrade' ? '优化' : '架构'}</span>
+              <span>${i.text}</span>
+            </div>
+          `).join('')}
+        </div>
+      `;
+      timelineContainer.appendChild(item);
+    });
+
+    /* ============================================================
+       ④ 预留区 — 自动检测已有内容
+       ============================================================ */
+    // 这是一个智能占位区。当你在这里添加真实卡片后，占位符自动隐藏。
+    // 你可以在 <div id="reserved-zone"> 内部直接写 HTML 卡片，
+    // 或通过 JS 动态追加。无需修改任何样式。
+
+    console.log('✅ AI 进化档案加载完成 — 编辑 DATA 对象即可更新内容');
+  </script>
+</body>
+</html>

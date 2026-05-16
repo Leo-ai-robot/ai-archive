@@ -371,6 +371,7 @@
     .item-type.fix  { background: rgba(255,170,0,0.12); color: #ffaa00; }
     .item-type.upgrade { background: rgba(42,127,255,0.12); color: var(--blue-soft); }
     .item-type.arch { background: rgba(232,240,255,0.08); color: var(--white); }
+    .item-type.project { background: rgba(0,255,170,0.12); color: #00ffaa; }
 
     /* ===== 预留空白区域 ===== */
     .placeholder-zone {
@@ -449,12 +450,12 @@
 
     <!-- ===== ① 首页头部 ===== -->
     <header class="hero">
-      <div class="hero-badge">◆ AI ARCHIVE v2.0</div>
+      <div class="hero-badge">◆ AI ARCHIVE v2.1</div>
       <h1>AI 进化档案</h1>
       <p>赫尔墨斯 —— 多智能体协调者 · 持续进化 · 能力全记录</p>
       <div class="meta">
         <span>📅 <span id="update-date">加载中...</span></span>
-        <span>⚡ 系统版本 v0.13.0</span>
+        <span>⚡ 系统版本 v0.14.0</span>
         <span>🧬 已激活 <span id="skill-count">0</span> 项技能</span>
       </div>
     </header>
@@ -583,7 +584,8 @@
           name: '🧠 研究 & 知识',
           items: [
             'web_search', 'web_extract', 'arxiv', 'blogwatcher',
-            'llm-wiki', 'polymarket', 'youtube-content'
+            'llm-wiki', 'polymarket', 'youtube-content',
+            'zhipu-vision'
           ]
         },
         {
@@ -592,7 +594,8 @@
             'claude-design', 'excalidraw', 'p5js', 'pixel-art',
             'ascii-art', 'ascii-video', 'sketch', 'architecture-diagram',
             'baoyu-comic', 'baoyu-infographic', 'manim-video', 'comfyui',
-            'songwriting-and-ai-music', 'touchdesigner-mcp'
+            'songwriting-and-ai-music', 'touchdesigner-mcp',
+            'pdf-showcase-development', 'pdf-to-brand-showcase'
           ]
         },
         {
@@ -603,7 +606,8 @@
             'systematic-debugging', 'spike', 'plan', 'writing-plans',
             'subagent-driven-development', 'requesting-code-review',
             'node-inspect-debugger', 'python-debugpy', 'codebase-inspection',
-            'hermes-agent-skill-authoring', 'debugging-hermes-tui-commands'
+            'hermes-agent-skill-authoring', 'debugging-hermes-tui-commands',
+            'github-pages-deploy'
           ]
         },
         {
@@ -649,7 +653,9 @@
         { ver: 'v2.5', desc: '<strong>双存储架构</strong> — <code>user</code>（用户画像）+ <code>memory</code>（环境/偏好/约定）分离' },
         { ver: 'v3.0', desc: '<strong>技能系统</strong> — 程序性记忆（SKILL.md）替代临时记忆，可复用工作流' },
         { ver: 'v3.1', desc: '<strong>记忆准入规则</strong> — 自动过滤任务日志/过期事实，只保留稳定知识' },
-        { ver: 'v3.2', desc: '<strong>session_search 升级</strong> — 直觉触发，OR 语义优化，主动跨 session 回忆' }
+        { ver: 'v3.2', desc: '<strong>session_search 升级</strong> — 直觉触发，OR 语义优化，主动跨 session 回忆' },
+        { ver: 'v3.3', desc: '<strong>工作路径记忆</strong> — 项目输出目录自动存档，避免放错位置' },
+        { ver: 'v3.4', desc: '<strong>用户偏好记忆</strong> — 记录「优先迭代 skill 而非无限创建」原则，减少膨胀' }
       ],
 
       // ---- 人格与规则进化 ----
@@ -678,6 +684,31 @@
             '中文场景自动切换到中文回复',
             '先理解全貌再行动，不急于执行',
             '跨 session 用 session_search 主动回忆'
+          ]
+        },
+        {
+          title: '🏛️ Echo 产品经理角色定型',
+          items: [
+            '专职需求侧：PRD / 用户故事 / 原型确认 / 验收标准',
+            '不写代码、不调研、不测试、不拆任务',
+            '输出完 PRD 后交给 Hermes 调度，不直接指挥团队'
+          ]
+        },
+        {
+          title: '🤝 AGENTS.md 团队规则迭代',
+          items: [
+            'Lint 角色升级：从「直通整改」到「混合型质检（小问题直接改，大问题打回重做）」',
+            '新增上行反馈通道：执行层发现问题可直报 Echo+Hermes（月限5次）',
+            'B_CLASS_TIMEOUT_MINUTES 参数化（默认15分钟，可配置）',
+            'C 类项目强制 Echo 出 PRD 才可执行，无自动放行'
+          ]
+        },
+        {
+          title: '🔄 Skill 管理原则确立',
+          items: [
+            '优先迭代/修补现有 skill（skill_manage patch），而非无限新建',
+            '重叠 skill 需合并（如 pdf-showcase-development + pdf-to-brand-showcase）',
+            '复杂任务完成后沉淀为 skill，简单任务不新建'
           ]
         }
       ],
@@ -730,6 +761,25 @@
             { type: 'feat', text: 'macOS Computer Use — 桌面后台操控' },
             { type: 'upgrade', text: 'kanban-orchestrator + kanban-worker 工作流' },
             { type: 'arch', text: '技能系统全面覆盖所有工具链' }
+          ]
+        },
+        {
+          date: '2026-05-01', week: 'W18',
+          items: [
+            { type: 'arch', text: 'Echo 产品经理角色定义：专职需求侧，不碰代码/调研/测试' },
+            { type: 'arch', text: 'AGENTS.md 团队规则大迭代：Lint 混合质检 + 上行反馈通道 + 可配置超时参数' },
+            { type: 'feat', text: 'zhipu-vision 识图技能：智谱 GLM-4V-Flash 绕过 deepseek 视觉盲区' }
+          ]
+        },
+        {
+          date: '2026-05-16', week: 'W20',
+          items: [
+            { type: 'project', text: '沧海传媒线上展示页完整交付（PRD → 开发 → 迭代 → GitHub Pages 部署）' },
+            { type: 'fix',  text: 'PDF 纯图片页漏读问题：强制 OCR/识图校验流程' },
+            { type: 'fix',  text: '案例分类排序错误：不再自己「猜」对应关系，先问用户确认' },
+            { type: 'fix',  text: '两侧装饰失效修复：body::after + position:fixed 替代 section::before' },
+            { type: 'upgrade', text: 'GitHub Pages 自动化部署流程（API 上传 + Pages 启用）' },
+            { type: 'arch', text: '确立 Skill 管理原则：优先迭代现有 skill，不无限创建' }
           ]
         }
       ]
@@ -815,7 +865,7 @@
         <div class="timeline-content">
           ${t.items.map(i => `
             <div class="item">
-              <span class="item-type ${i.type}">${i.type === 'feat' ? '新增' : i.type === 'fix' ? '修复' : i.type === 'upgrade' ? '优化' : '架构'}</span>
+              <span class="item-type ${i.type}">${i.type === 'feat' ? '新增' : i.type === 'fix' ? '修复' : i.type === 'upgrade' ? '优化' : i.type === 'arch' ? '架构' : '项目'}</span>
               <span>${i.text}</span>
             </div>
           `).join('')}

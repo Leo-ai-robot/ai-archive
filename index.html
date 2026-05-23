@@ -655,7 +655,9 @@
         { ver: 'v3.1', desc: '<strong>记忆准入规则</strong> — 自动过滤任务日志/过期事实，只保留稳定知识' },
         { ver: 'v3.2', desc: '<strong>session_search 升级</strong> — 直觉触发，OR 语义优化，主动跨 session 回忆' },
         { ver: 'v3.3', desc: '<strong>工作路径记忆</strong> — 项目输出目录自动存档，避免放错位置' },
-        { ver: 'v3.4', desc: '<strong>用户偏好记忆</strong> — 记录「优先迭代 skill 而非无限创建」原则，减少膨胀' }
+        { ver: 'v3.4', desc: '<strong>用户偏好记忆</strong> — 记录「优先迭代 skill 而非无限创建」原则，减少膨胀' },
+        { ver: 'v3.5', desc: '<strong>日常学习追踪</strong> — 91天AI Agent学习计划，每日自动提醒 + 进度推进，session_search 自动续接' },
+        { ver: 'v3.6', desc: '<strong>业务文件路径固化</strong> — 非出图类文档默认 → <code>~/Desktop/business-plan/</code>，出图类 → <code>hermes%comfyui/</code>' }
       ],
 
       // ---- 人格与规则进化 ----
@@ -709,6 +711,31 @@
             '优先迭代/修补现有 skill（skill_manage patch），而非无限新建',
             '重叠 skill 需合并（如 pdf-showcase-development + pdf-to-brand-showcase）',
             '复杂任务完成后沉淀为 skill，简单任务不新建'
+          ]
+        },
+        {
+          title: '🎓 Xiaoliu 学习助手角色定型',
+          items: [
+            '专职个人学习助理，不替代 Brain/Echo/Turing 等团队成员',
+            '负责日常答疑、工具配置、学习路线规划、每日打卡提醒',
+            'AI Agent 工程师 91天学习路线 V1.1 已落地 → business-plan 目录'
+          ]
+        },
+        {
+          title: '📁 business-plan 文件存档规范',
+          items: [
+            '文档/路线图/学习资料 → ~/Desktop/business-plan/',
+            '出图相关 → ~/Desktop/business-plan/hermes%comfyui/',
+            'AI 进化档案项目 → ~/Desktop/business-plan/project/ai-archive/'
+          ]
+        },
+        {
+          title: '📅 每日学习提醒系统',
+          items: [
+            'cronjob + Python 脚本驱动，每日 9:00 自动推送',
+            '进度存储在 ~/.hermes/scripts/learning_progress.json',
+            '当日学习内容在 ~/.hermes/scripts/learning_data.json（91天全覆盖）',
+            '支持手动查询：「今天学什么」随时触发当天内容'
           ]
         }
       ],
@@ -780,6 +807,17 @@
             { type: 'fix',  text: '两侧装饰失效修复：body::after + position:fixed 替代 section::before' },
             { type: 'upgrade', text: 'GitHub Pages 自动化部署流程（API 上传 + Pages 启用）' },
             { type: 'arch', text: '确立 Skill 管理原则：优先迭代现有 skill，不无限创建' }
+          ]
+        },
+        {
+          date: '2026-05-23', week: 'W21',
+          items: [
+            { type: 'feat', text: 'RunningHub ComfyUI 接入方案 — 全能图片G-2.0图生图工作流搭建指导' },
+            { type: 'feat', text: 'AI Agent 工程师 91天学习路线 V1.1 发布（HTML+PDF 双格式）' },
+            { type: 'feat', text: '每日学习提醒 cronjob 系统上线（no_agent 脚本模式，9:00自动推送）' },
+            { type: 'arch', text: 'Xiaoliu 角色定型：专职个人学习助手，不替代团队成员' },
+            { type: 'arch', text: 'business-plan 文件存档规范确立：文档→business-plan/，出图→hermes%comfyui/' },
+            { type: 'upgrade', text: 'AI 进化档案更新 — 记忆/人格/时间轴同步至 Day 91 学习计划' }
           ]
         }
       ]

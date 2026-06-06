@@ -450,12 +450,12 @@
 
     <!-- ===== ① 首页头部 ===== -->
     <header class="hero">
-      <div class="hero-badge">◆ AI ARCHIVE v2.1</div>
+      <div class="hero-badge">◆ AI ARCHIVE v2.2</div>
       <h1>AI 进化档案</h1>
       <p>赫尔墨斯 —— 多智能体协调者 · 持续进化 · 能力全记录</p>
       <div class="meta">
         <span>📅 <span id="update-date">加载中...</span></span>
-        <span>⚡ 系统版本 v0.14.0</span>
+        <span>⚡ 系统版本 v0.15.0</span>
         <span>🧬 已激活 <span id="skill-count">0</span> 项技能</span>
       </div>
     </header>
@@ -585,7 +585,7 @@
           items: [
             'web_search', 'web_extract', 'arxiv', 'blogwatcher',
             'llm-wiki', 'polymarket', 'youtube-content',
-            'zhipu-vision'
+            'zhipu-vision', 'scrapling-mcp', 'codegraph'
           ]
         },
         {
@@ -593,8 +593,10 @@
           items: [
             'claude-design', 'excalidraw', 'p5js', 'pixel-art',
             'ascii-art', 'ascii-video', 'sketch', 'architecture-diagram',
-            'baoyu-comic', 'baoyu-infographic', 'manim-video', 'comfyui',
+            'baoyu-comic', 'baoyu-infographic', 'baoyu-article-illustrator',
+            'manim-video', 'comfyui', 'leo-workflow',
             'songwriting-and-ai-music', 'touchdesigner-mcp',
+            'guizang-ppt-skill', 'claude-design',
             'pdf-showcase-development', 'pdf-to-brand-showcase'
           ]
         },
@@ -607,7 +609,7 @@
             'subagent-driven-development', 'requesting-code-review',
             'node-inspect-debugger', 'python-debugpy', 'codebase-inspection',
             'hermes-agent-skill-authoring', 'debugging-hermes-tui-commands',
-            'github-pages-deploy'
+            'github-pages-deploy', 'hermes-web-ui', 'lm-studio-local'
           ]
         },
         {
@@ -657,7 +659,12 @@
         { ver: 'v3.3', desc: '<strong>工作路径记忆</strong> — 项目输出目录自动存档，避免放错位置' },
         { ver: 'v3.4', desc: '<strong>用户偏好记忆</strong> — 记录「优先迭代 skill 而非无限创建」原则，减少膨胀' },
         { ver: 'v3.5', desc: '<strong>日常学习追踪</strong> — 91天AI Agent学习计划，每日自动提醒 + 进度推进，session_search 自动续接' },
-        { ver: 'v3.6', desc: '<strong>业务文件路径固化</strong> — 非出图类文档默认 → <code>~/Desktop/business-plan/</code>，出图类 → <code>hermes%comfyui/</code>' }
+        { ver: 'v3.6', desc: '<strong>业务文件路径固化</strong> — 非出图类文档默认 → <code>~/Desktop/business-plan/</code>，出图类 → <code>hermes%comfyui/</code>' },
+        { ver: 'v3.7', desc: '<strong>Scrapling MCP 替代 Firecrawl</strong> — 搜索+提取统一走 DuckDuckGo + Scrapling，Firecrawl 额度耗尽退役' },
+        { ver: 'v3.8', desc: '<strong>CodeGraph 知识图谱</strong> — npm 全局安装 + MCP Server 配置，代码语义索引与调用链追踪' },
+        { ver: 'v3.9', desc: '<strong>MCP args 格式坑修复</strong> — MCP args 必须存 YAML 列表格式，字符串格式导致连接失败' },
+        { ver: 'v3.10', desc: '<strong>出图沟通铁律定型</strong> — 一把梭哈不分析不追问，直接出图+存档+发结果' },
+        { ver: 'v3.11', desc: '<strong>多 profile vision 配置确认</strong> — v4-flash 原生看图 + Echo/Mira 显式配辅助视觉模型，Brain 未配' }
       ],
 
       // ---- 人格与规则进化 ----
@@ -736,6 +743,39 @@
             '进度存储在 ~/.hermes/scripts/learning_progress.json',
             '当日学习内容在 ~/.hermes/scripts/learning_data.json（91天全覆盖）',
             '支持手动查询：「今天学什么」随时触发当天内容'
+          ]
+        },
+        {
+          title: '🔄 搜索引擎统一迁移',
+          items: [
+            'Firecrawl 额度耗尽后正式退役 → 全面迁移 DuckDuckGo + Scrapling MCP',
+            '搜索后端 search_backend=extract_backend=ddgs 全 profile 统一',
+            'Scrapling MCP 配备10个工具：get/stealthy_fetch/fetch/bulk/screenshot等'
+          ]
+        },
+        {
+          title: '👁️ 看图能力矩阵定型',
+          items: [
+            'deepseek-v4-flash 原生支持多模态输入 — Turing/Lint/Alan 不配 auxiliary.vision 也能看图',
+            'Echo 配 qwen3.6-plus 辅助视觉模型；Mira 配 qwen3.7-plus',
+            'ZAI Vision 方案：vision_analyze 首选 opencode-go，智谱 GLM-4V-Flash 备用',
+            'Brain (v4-pro) 看图能力未验证，需额外配置'
+          ]
+        },
+        {
+          title: '🎯 团队沟通模式定型',
+          items: [
+            '用户只对接 Xiaoliu 单点入口，团队自行协调不逐个沟通',
+            'Mira 脱离 Kanban 体系，定位独立策划角色，跟 Xiaoliu 联动',
+            'Xiaoliu 负责出图/排版，Mira 负责客户活动策划/创意方向'
+          ]
+        },
+        {
+          title: '📋 排查验证铁律确立',
+          items: [
+            '回答前必须先查原始日志/API调用记录，不能信表面指标',
+            '先下结论再找证据是错的 — 日志才是真相',
+            'CLI 状态显示 / model list / providers list 都可能骗人'
           ]
         }
       ],
@@ -828,7 +868,29 @@
             { type: 'feat', text: 'nano-pdf CLI 安装 — 自然语言指令编辑PDF文字' },
             { type: 'project', text: '越风华 校园文化艺术节 KV海报出图 — 红绸经典颂歌 + 青春声浪飞扬 双方案' },
             { type: 'arch', text: '融梗独立于Kanban体系 — 不参与Brain调度，只跟Xiaoliu互cue' },
-            { type: 'upgrade', text: '文字润色格式规范 — 表格+emoji+通顺版交替，用于方案文档' }
+            { type: 'arch', text: '文字润色格式规范 — 表格+emoji+通顺版交替，用于方案文档' }
+          ]
+        },
+        {
+          date: '2026-06-01', week: 'W23',
+          items: [
+            { type: 'arch', text: 'Firecrawl 额度耗尽正式退役 — 搜索后端统一 DuckDuckGo，页面提取改用 Scrapling MCP' },
+            { type: 'feat', text: 'Scrapling MCP 上线 — 10个工具 (get/stealthy_fetch/fetch/bulk/screenshot等) 覆盖全部爬虫需求' },
+            { type: 'feat', text: 'CodeGraph 知识图谱引擎安装 — npm install -g + MCP Server 配置，代码语义索引' },
+            { type: 'feat', text: 'Hermes Web UI 配置 (nesquena/hermes-webui) — 端口8787，独立 profile 隔离' },
+            { type: 'fix',  text: 'MCP args 格式坑 — 必须存 YAML 列表格式，字符串格式导致连接失败' },
+            { type: 'upgrade', text: '文档转换工具链 — Pandoc 3.9.0.2 (brew) + Marker (marker-pdf) MD↔Word 通吃' }
+          ]
+        },
+        {
+          date: '2026-06-06', week: 'W24',
+          items: [
+            { type: 'feat', text: 'deepseek-v4-flash 原生看图能力确认 — 通过 opencode-go 通路，Turing/Lint/Alan 无需 auxiliary.vision 即可看图' },
+            { type: 'arch', text: 'ZAI Vision 方案定型 — vision_analyze 首选 (opencode-go)，Python 直调智谱 GLM-4V-Flash 备用' },
+            { type: 'arch', text: 'Mira 独立策划角色定型 — 脱离 Kanban 体系，专注客户活动策划/创意方向，跟 Xiaoliu 联动' },
+            { type: 'arch', text: '团队沟通模式定型 — 用户只对接 Xiaoliu 单点入口，团队自行协调' },
+            { type: 'fix',  text: '会话丢失 root cause 定位 — hygiene_hard_message_limit 硬性限制导致消息被压缩' },
+            { type: 'upgrade', text: 'LM Studio 本地模型接入 — google/gemma-4-26b-a4b (localhost:1234)，Day 8 教程完成适配' }
           ]
         }
       ]

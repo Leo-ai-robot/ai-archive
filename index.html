@@ -450,12 +450,12 @@
 
     <!-- ===== ① 首页头部 ===== -->
     <header class="hero">
-      <div class="hero-badge">◆ AI ARCHIVE v2.2</div>
+      <div class="hero-badge">◆ AI ARCHIVE v2.3</div>
       <h1>AI 进化档案</h1>
       <p>赫尔墨斯 —— 多智能体协调者 · 持续进化 · 能力全记录</p>
       <div class="meta">
         <span>📅 <span id="update-date">加载中...</span></span>
-        <span>⚡ 系统版本 v0.15.0</span>
+        <span>⚡ 系统版本 v0.16.0</span>
         <span>🧬 已激活 <span id="skill-count">0</span> 项技能</span>
       </div>
     </header>
@@ -585,7 +585,8 @@
           items: [
             'web_search', 'web_extract', 'arxiv', 'blogwatcher',
             'llm-wiki', 'polymarket', 'youtube-content',
-            'zhipu-vision', 'scrapling-mcp', 'codegraph'
+            'zhipu-vision', 'scrapling-mcp', 'codegraph',
+            'prompt-optimizer-mcp', 'seedance-20', 'paperclip'
           ]
         },
         {
@@ -766,8 +767,8 @@
           title: '🎯 团队沟通模式定型',
           items: [
             '用户只对接 Xiaoliu 单点入口，团队自行协调不逐个沟通',
-            'Mira 脱离 Kanban 体系，定位独立策划角色，跟 Xiaoliu 联动',
-            'Xiaoliu 负责出图/排版，Mira 负责客户活动策划/创意方向'
+            'Mira 脱离 Kanban 体系，定位独立策划角色，独立完成策划→概念图→PPT 全流程',
+            'Mira 独立负责客户活动策划/创意方向，自闭环概念图+PPT 输出'
           ]
         },
         {
@@ -776,6 +777,15 @@
             '回答前必须先查原始日志/API调用记录，不能信表面指标',
             '先下结论再找证据是错的 — 日志才是真相',
             'CLI 状态显示 / model list / providers list 都可能骗人'
+          ]
+        },
+        {
+          title: '🌐 终端代理铁律确立',
+          items: [
+            'FlClash 在 127.0.0.1:7890，浏览器自动走代理但终端不继承',
+            '任何下载/拉取失败第一时间先 export HTTP_PROXY=http://127.0.0.1:7890',
+            'Docker Desktop 可进设置配代理一劳永逸',
+            '大文件（>50MB）让用户浏览器下，不在终端反复重试'
           ]
         }
       ],
@@ -887,10 +897,23 @@
           items: [
             { type: 'feat', text: 'deepseek-v4-flash 原生看图能力确认 — 通过 opencode-go 通路，Turing/Lint/Alan 无需 auxiliary.vision 即可看图' },
             { type: 'arch', text: 'ZAI Vision 方案定型 — vision_analyze 首选 (opencode-go)，Python 直调智谱 GLM-4V-Flash 备用' },
-            { type: 'arch', text: 'Mira 独立策划角色定型 — 脱离 Kanban 体系，专注客户活动策划/创意方向，跟 Xiaoliu 联动' },
+            { type: 'arch', text: 'Mira 独立策划角色定型 — 脱离 Kanban 体系，专注客户活动策划/创意方向，自闭环策划→概念图→PPT 全流程' },
             { type: 'arch', text: '团队沟通模式定型 — 用户只对接 Xiaoliu 单点入口，团队自行协调' },
             { type: 'fix',  text: '会话丢失 root cause 定位 — hygiene_hard_message_limit 硬性限制导致消息被压缩' },
             { type: 'upgrade', text: 'LM Studio 本地模型接入 — google/gemma-4-26b-a4b (localhost:1234)，Day 8 教程完成适配' }
+          ]
+        },
+        {
+          date: '2026-06-27', week: 'W26',
+          items: [
+            { type: 'feat', text: 'Prompt Optimizer MCP 集成 — Docker 容器部署（源码构建），端口8081，opencode-go+deepseek-v4-flash，所有 Agent 可调用优化 prompt' },
+            { type: 'feat', text: 'Seedance 2.0 Skill OS 安装至 Alan profile — 28子技能+57参考文档，AI视频生成导演引擎' },
+            { type: 'feat', text: 'go-stock A股/基金桌面分析工具调研 — macOS 桌面应用，支持基金净值/持仓/K线' },
+            { type: 'feat', text: 'TradingAgents-Astock 调研 — 7 Agent A股投研框架，多空辩论决策' },
+            { type: 'feat', text: 'Paperclip 加星待研究 — Agent 公司操作系统，Hermes 官方适配器，跨平台编排' },
+            { type: 'arch', text: '终端代理铁律确立 — FlClash 7890 端口一劳永逸，所有终端/下载命令先设 HTTP_PROXY' },
+            { type: 'arch', text: 'MCP 工具/外部服务板块写入 agent-architecture.html — prompt-optimizer + codegraph 记录' },
+            { type: 'arch', text: 'Colima 卸载因网络不可达 — 后续改用 Docker Desktop' }
           ]
         }
       ]
